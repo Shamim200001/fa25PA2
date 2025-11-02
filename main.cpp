@@ -50,26 +50,26 @@ int main() {
 
 // Step 1: Read file and count frequencies
 void buildFrequencyTable(int freq[], const string& filename) {
-   // ifstream file(filename);
-    //if (!file.is_open()) {
-      //  cerr << "Error: could not open " << filename << "\n";
-        //exit(1);
+   ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error: could not open " << filename << "\n";
+        exit(1);
     }
 
-    //char ch;
-    //while (file.get(ch)) {
-        // Convert uppercase to lowercase
-      //  if (ch >= 'A' && ch <= 'Z')
-        //    ch = ch - 'A' + 'a';
+    char ch;
+    while (file.get(ch)) {
+        //Convert uppercase to lowercase
+        if (ch >= 'A' && ch <= 'Z')
+           ch = ch - 'A' + 'a';
 
         // Count only lowercase letters
-        //if (ch >= 'a' && ch <= 'z')
-          //  freq[ch - 'a']++;
-    //}
-    //file.close();
+        if (ch >= 'a' && ch <= 'z')
+           freq[ch - 'a']++;
+    }
+    file.close();
 
-    //cout << "Frequency table built successfully.\n";
-//}
+    cout << "Frequency table built successfully.\n";
+}
 
 // Step 2: Create leaf nodes for each character
 int createLeafNodes(int freq[]) {
@@ -89,24 +89,24 @@ int createLeafNodes(int freq[]) {
 
 // Step 3: Build the encoding tree using heap operations
 int buildEncodingTree(int nextFree) {
-    //MinHeap heap;
-    //for (int i = 0; i < nextFree; ++i) {
-        //heap.push(i, weightArr);
+    MinHeap heap;
+    for (int i = 0; i < nextFree; ++i) {
+        heap.push(i, weightArr);
 
-       // }
+       }
 
-    //while (heap.size() > 1) {
-      //  int leftIdx = heap.pop(weightArr);
-       // int rightIdx = heap.pop(weightArr);
+   while (heap.size > 1) {
+        int leftIdx = heap.pop(weightArr);
+        int rightIdx = heap.pop(weightArr);
 
-       // weightArr [nextFree] = weightArr[leftIdx] + weightArr[rightIdx];
-       // leftArr[nextFree] = leftIdx;
-       // rightArr[nextFree] = rightIdx;
-       // charArr[nextFree] = '\0';
+        weightArr [nextFree] = weightArr[leftIdx] + weightArr[rightIdx];
+       leftArr[nextFree] = leftIdx;
+       rightArr[nextFree] = rightIdx;
+        charArr[nextFree] = '\0';
 
-       // heap.push(nextFree, weightArr);
+        heap.push(nextFree, weightArr);
         nextFree++;
-   // }
+  }
 
     // TODO:
     // 1. Create a MinHeap object.
@@ -120,6 +120,7 @@ int buildEncodingTree(int nextFree) {
     return -1; // placeholder
 }
 
+
 // Step 4: Use an STL stack to generate codes
 void generateCodes(int root, string codes[]) {
 
@@ -127,6 +128,30 @@ void generateCodes(int root, string codes[]) {
     // Use stack<pair<int, string>> to simulate DFS traversal.
     // Left edge adds '0', right edge adds '1'.
     // Record code when a leaf node is reached.
+
+    stack<pair<int, string>> nodeStack;
+    nodeStack.push(make_pair(root, ""));
+
+
+    while (!nodeStack.empty()) {
+        pair<int, string> node = nodeStack.top();
+        nodeStack.pop();
+
+        int nodeIndex = node.first;
+        string currentCode = node.second;
+
+        if (charArr[nodeIndex] != '\0') {
+            int charIndex = charArr[nodeIndex] - 'a';
+            codes[nodeIndex] = currentCode;
+        }
+
+        if (leftArr[nodeIndex] != -1) {
+            nodeStack.push(make_pair(leftArr[nodeIndex], currentCode + "0"));
+        }
+        if (rightArr[nodeIndex] != -1) {
+            nodeStack.push(make_pair(rightArr[nodeIndex], currentCode + "1"));
+        }
+    }
 }
 
 // Step 5: Print table and encoded message
