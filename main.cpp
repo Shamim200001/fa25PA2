@@ -88,22 +88,27 @@ int createLeafNodes(int freq[]) {
 }
 
 // Step 3: Build the encoding tree using heap operations
+//Using MinHeap to always get the smallest node from the heap
+// will keep getting sorted by weightArr
 int buildEncodingTree(int nextFree) {
     MinHeap heap;
     for (int i = 0; i < nextFree; ++i) {
         heap.push(i, weightArr);
 
        }
-
+//This loop will keep checking the nodes to finally reach the root
+//The heap keep checking the right and left children to find the smallest node
    while (heap.size > 1) {
         int leftIdx = heap.pop(weightArr);
         int rightIdx = heap.pop(weightArr);
-
+//The heap has to be checked
+//the new internal node that been cretaed will combine the right and left children
         weightArr [nextFree] = weightArr[leftIdx] + weightArr[rightIdx];
        leftArr[nextFree] = leftIdx;
        rightArr[nextFree] = rightIdx;
         charArr[nextFree] = '\0';
-
+//This push will add a new combination node for heap
+//The new node will be checked for the heap
         heap.push(nextFree, weightArr);
         nextFree++;
   }
@@ -117,11 +122,13 @@ int buildEncodingTree(int nextFree) {
     //    - Set left/right pointers
     //    - Push new parent index back into the heap
     // 4. Return the index of the last remaining node (root)
-    return -1; // placeholder
+    return heap.pop(weightArr); // placeholder
 }
 
 
 // Step 4: Use an STL stack to generate codes
+//We are using the stack<pair<int, string>> for the DFS traversal
+//Each stack will be sorted in this tree
 void generateCodes(int root, string codes[]) {
 
     // TODO:
@@ -155,6 +162,9 @@ void generateCodes(int root, string codes[]) {
 }
 
 // Step 5: Print table and encoded message
+//This part is for the display
+//This part will display the code table and convert the input text to encoded message
+
 void encodeMessage(const string& filename, string codes[]) {
     cout << "\nCharacter : Code\n";
     for (int i = 0; i < 26; ++i) {
