@@ -103,7 +103,7 @@ int buildEncodingTree(int nextFree) {
         int rightIdx = heap.pop(weightArr);
 //The heap has to be checked
 //the new internal node that been cretaed will combine the right and left children
-        weightArr [nextFree] = weightArr[leftIdx] + weightArr[rightIdx];
+       weightArr [nextFree] = weightArr[leftIdx] + weightArr[rightIdx];
        leftArr[nextFree] = leftIdx;
        rightArr[nextFree] = rightIdx;
         charArr[nextFree] = '\0';
@@ -123,6 +123,8 @@ int buildEncodingTree(int nextFree) {
     //    - Push new parent index back into the heap
     // 4. Return the index of the last remaining node (root)
     return heap.pop(weightArr); // placeholder
+//The return has to change because my display would only print the root
+    //I want my display to print all the encoded message
 }
 
 
@@ -139,6 +141,8 @@ void generateCodes(int root, string codes[]) {
     stack<pair<int, string>> nodeStack;
     nodeStack.push(make_pair(root, ""));
 
+//Keep go through the node until the stack the empty
+//Following the stack rules which are keeping getting to the next node
 
     while (!nodeStack.empty()) {
         pair<int, string> node = nodeStack.top();
@@ -147,12 +151,16 @@ void generateCodes(int root, string codes[]) {
         int nodeIndex = node.first;
         string currentCode = node.second;
 
+//This part the code get stored for the character
+//If the node is at the end which is leaf node then save the code
         if (charArr[nodeIndex] != '\0') {
-            int charIndex = charArr[nodeIndex] - 'a';
-            codes[nodeIndex] = currentCode;
+            char character = charArr[nodeIndex];
+            codes[character - 'a'] = currentCode;
         }
 
-        if (leftArr[nodeIndex] != -1) {
+ //If the left child exist then push it with currentCode 0
+ //The same proces for the right child as well and push it with CurrentCode 1
+             if (leftArr[nodeIndex] != -1) {
             nodeStack.push(make_pair(leftArr[nodeIndex], currentCode + "0"));
         }
         if (rightArr[nodeIndex] != -1) {
